@@ -4,28 +4,10 @@ import java.util.List;
 import java.util.Map;
 
 public class Tokens {
-    private class TokenType{
-        private String token;
-        private String literal;
 
-        TokenType(String token, String literal)
-        {
-            this.token = token;
-            this.literal = literal;
-        }
-
-        private String getToken()
-        {
-            return this.token;
-        }
-
-        private String getLiteral()
-        {
-            return this.literal;
-        }
-    }
     String source;
     ArrayList<TokenType> map = new ArrayList<>();
+
     int size;
 
     Tokens(String sourcecode) {
@@ -180,10 +162,8 @@ public class Tokens {
 
     void show_tokens()
     {
-        for(int i=0;i<this.map.size();i++)
-        {
-            System.out.println("Token: "+map.get(i).token+" | Literal: "+map.get(i).literal);
-        }
+        PythonHandler phandler = new PythonHandler(getTokens());
+        phandler.show();
     }
 
 
