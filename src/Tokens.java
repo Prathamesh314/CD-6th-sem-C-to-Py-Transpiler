@@ -48,6 +48,7 @@ public class Tokens {
         l.add("&&");
         l.add("|");
         l.add("||");
+        l.add(" ");
 
         String symbol = Character.toString(ch);
         return l.contains(symbol);
@@ -149,6 +150,89 @@ public class Tokens {
 
     }
 
+    void parse_while_body(int i)
+    {
+        if(i >= this.source.length()) return;
+        char ch = this.source.charAt(i);
+        switch (ch)
+        {
+            case 'p':
+                if(this.source.startsWith("printf", i)){
+                    i+=6;
+                    String pp = "";
+                    if(this.source.charAt(i) == '(') i++;
+                    while(this.source.charAt(i) != ')')
+                    {
+                        pp += this.source.charAt(i);
+                        i++;
+                    }
+                    map.add(new TokenType("PRINT EXPR", pp));
+                }
+                else{
+                    i++;
+                }
+                break;
+            case '}':
+                map.add(new TokenType("CLOSE BRACS", "}"));
+                break;
+            default:
+                String pp = "";
+                while(i<this.source.length() && this.source.charAt(i) != ';')
+                {
+                    pp += this.source.charAt(i);
+                    i++;
+                }
+
+                map.add(new TokenType("IDENT", pp));
+                i++;
+                parse_while_body(i);
+                break;
+        }
+    }
+
+    void parse_while_expression(int i)
+    {
+        // while ( expr ) { body }
+
+        while(this.source.charAt(i) == ' '){
+            i++;
+        }
+
+        char ch = this.source.charAt(i);
+        switch(ch)
+        {
+            case '(':
+                map.add(new TokenType("OPEN PAR", "("));
+                i++;
+                parse_while_expression(i);
+                break;
+            case ')':
+                map.add(new TokenType("CLOSE PAR", ")"));
+                i++;
+                parse_while_expression(i);
+                break;
+            case '{':
+                map.add(new TokenType("OPEN BRACS", "{"));
+                i++;
+                parse_while_body(i);
+                break;
+            case '}':
+                map.add(new TokenType("CLOSE BRACS", "}"));
+                i++;
+                break;
+            default:
+                String kk = "";
+                while(this.source.charAt(i) != ')')
+                {
+                    kk += this.source.charAt(i);
+                    i++;
+                }
+                map.add(new TokenType("EXPR", kk));
+                parse_while_expression(i);
+                break;
+        }
+    }
+
     void parse_c(int i) {
         while (i < size) {
             char ch = this.source.charAt(i);
@@ -235,8 +319,16 @@ public class Tokens {
                     map.add(new TokenType("CLOSE BRACS", "}"));
                     i++;
                     break;
+                case 'w':
+                    if(this.source.startsWith("while", i)){
+                        map.add(new TokenType("WHILE", "while"));
+                        i+=5;
+                        parse_while_expression(i);
+                        break;
+                    }
                 default:
                     i++;
+                    break;
             }
         }
     }
@@ -249,7 +341,7 @@ public class Tokens {
     void show_tokens()
     {
         getTokens();
-//        this.pythonHandler.show();
+        this.pythonHandler.show();
     }
 
     void parse_c_to_python()

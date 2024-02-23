@@ -11,6 +11,10 @@ public class Main {
                 "} else {\n" +
                 "   printf(\"Hello\");\n" +
                 "}\n"+
+                "while(t < 5) {\n"+
+                "printf(1);\n"+
+                "t++;\n"+
+                "}\n"+
                 "return 0;\n"+
                 "}";
         Tokens tokens = new Tokens(source);
