@@ -200,6 +200,22 @@ public class Tokens {
                         i++;
                     }
                     break;
+                case 'e':
+                    if(this.source.startsWith("else", i))
+                    {
+                        map.add(new TokenType("ELSE", "else"));
+                        i+=4;
+                        while(this.source.charAt(i) == ' ')
+                        {
+                            i++;
+                        }
+                        map.add(new TokenType("OPEN BRACS", "{"));
+                        i++;
+                        parse_if_expression(i);
+                    }else{
+                        i++;
+                    }
+
                 case 'p':
                     if (this.source.startsWith("printf", i)) {
                         i += 6;

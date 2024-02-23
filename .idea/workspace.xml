@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="9ccd270b-a1ca-447c-b861-c7313ae4e01d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/PythonHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/PythonHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Tokens.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tokens.java" afterDir="false" />
     </list>
