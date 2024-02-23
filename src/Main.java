@@ -16,5 +16,7 @@ public class Main {
         Tokens tokens = new Tokens(source);
         tokens.parse_c(0);
         tokens.show_tokens();
+        System.out.println("Python starts here....");
+        tokens.parse_c_to_python();
     }
 }
