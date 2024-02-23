@@ -36,6 +36,7 @@ public class PythonHandler {
     void parse_python_if_expression(int i)
     {
         // if ( Expr ): body else: body
+
         pymap.add(new TokenType("IF", "if"));
         i++;
         pymap.add(new TokenType("OPEN PAR", "("));
@@ -48,7 +49,8 @@ public class PythonHandler {
             {
                 if(expr.charAt(j+1) == '|')
                 {
-                    expr1 += " and ";
+                    expr1 += " or ";
+                    j++;
                 }else{
                     expr1 += " | ";
                 }
@@ -56,7 +58,8 @@ public class PythonHandler {
             {
                 if(expr.charAt(j+1) == '&')
                 {
-                    expr1 += " && ";
+                    expr1 += " and ";
+                    j++;
                 }else{
                     expr1 += " & ";
                 }
@@ -68,12 +71,17 @@ public class PythonHandler {
         i++;
         pymap.add(new TokenType("CLOSE PAR", ")"));
         i++;
-        pymap.add(new TokenType("COLON", ":"));
-        i++;
-        parse_python_function_body(i);
+//        parse_python_function_body(i);
 
     }
 
+    void parse_python_else_expression(int i)
+    {
+        TokenType tt = map.get(i);
+        pymap.add(new TokenType("COLON", ":"));
+        i++;
+        parse_python_function_body(i);
+    }
     public void parse_python_function_body(int i)
     {
         TokenType tt = map.get(i);
@@ -84,6 +92,7 @@ public class PythonHandler {
                 break;
             case "PRINT EXPR":
                 pymap.add(new TokenType("PRINT EXPR", tt.getLiteral()));
+                i++;
                 break;
             default:
                 i++;
@@ -115,6 +124,10 @@ public class PythonHandler {
                     i++;
                     parse_python_function_body(i);
                     break;
+                case "ELSE":
+                    pymap.add(new TokenType("ELSE", "else"));
+                    i++;
+                    break;
                 default:
                     i++;
                     break;
@@ -128,6 +141,48 @@ public class PythonHandler {
         {
             System.out.println("TOKEN: "+pymap.get(i).getToken()+" | Literal: "+pymap.get(i).getLiteral());
         }
+    }
+
+    public void write_code()
+    {
+        String output = "";
+        int tabs = 0;
+
+        for(int i=0;i<pymap.size();i++)
+        {
+
+            if(pymap.get(i).getToken() == "FUNCTION"){
+                output += " ".repeat(tabs);
+                tabs += 4;
+                output += pymap.get(i).getLiteral() + " ";
+            }
+            else if(pymap.get(i).getToken() == "ELSE")
+            {
+                output += " ".repeat(tabs-4);
+                output += pymap.get(i).getLiteral();
+                tabs -= 4;
+            }
+            else if(pymap.get(i).getToken() == "COLON"){
+                output += pymap.get(i).getLiteral() + "\n";
+                tabs += 4;
+            }
+            else if(pymap.get(i).getToken() == "PRINT EXPR")
+            {
+                output += " ".repeat(tabs);
+                output += "print(";
+                output += pymap.get(i).getLiteral();
+                output += ")" + "\n";
+            }else if(pymap.get(i).getToken() == "IF")
+            {
+                output += " ".repeat(tabs);
+                output += pymap.get(i).getLiteral()+" ";
+            }
+            else{
+                output += pymap.get(i).getLiteral() + " ";
+            }
+
+        }
+        System.out.println(output);
     }
 
 }

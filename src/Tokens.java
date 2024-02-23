@@ -44,6 +44,10 @@ public class Tokens {
         l.add("<");
         l.add(">=");
         l.add("<=");
+        l.add("&");
+        l.add("&&");
+        l.add("|");
+        l.add("||");
 
         String symbol = Character.toString(ch);
         return l.contains(symbol);
@@ -209,12 +213,11 @@ public class Tokens {
                         {
                             i++;
                         }
-                        map.add(new TokenType("OPEN BRACS", "{"));
-                        i++;
-                        parse_if_expression(i);
+
                     }else{
                         i++;
                     }
+                    break;
 
                 case 'p':
                     if (this.source.startsWith("printf", i)) {
@@ -246,13 +249,29 @@ public class Tokens {
     void show_tokens()
     {
         getTokens();
-        this.pythonHandler.show();
+//        this.pythonHandler.show();
     }
 
     void parse_c_to_python()
     {
         this.pythonHandler.parse_to_python();
+//        this.pythonHandler.show_pytokens();
+        this.pythonHandler.write_code();
+    }
+
+    void show_py_tokens()
+    {
         this.pythonHandler.show_pytokens();
+    }
+
+    void write_python_code()
+    {
+        this.pythonHandler.write_code();
+    }
+
+    void show_source_code()
+    {
+        System.out.println(this.source);
     }
 
 }
