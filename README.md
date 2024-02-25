@@ -21,3 +21,18 @@ In later stage, I have passed this list to another class that converts this C to
 2. ### Python Program
 
 <img src="/images/py.png" alt="P Program" />
+
+
+# How to run this program locally
+
+1. Prerequisites
+   > docker
+   > java
+   > node
+
+2. Clone this repo on your local machine
+3. Run this command :- `docker compose up -d` on your terminal
+4. Goto http://localhost:8080 and create a new database [transpiler]
+5. Backend is in JAVA so run it on your regular java ide
+6. Frontend is in nextjs. To run frontend, Open new terminal [If backend and frontend both are running on same IDE] `cd frontend && npm run dev`
+7. Goto localhost:3000 to view website
