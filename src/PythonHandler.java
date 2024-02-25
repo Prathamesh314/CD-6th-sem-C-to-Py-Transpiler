@@ -105,6 +105,28 @@ public class PythonHandler {
 
     }
 
+    void parse_while_body(int i)
+    {
+        while (map.get(i).getLiteral() != "}"){
+            TokenType tt = map.get(i);
+            switch (tt.getToken())
+            {
+
+            }
+        }
+    }
+
+    void parse_python_while_expression(int i)
+    {
+        while (map.get(i).getToken() != "OPEN BRACS"){
+            pymap.add(new TokenType(map.get(i).getToken(), map.get(i).getLiteral()));
+            i++;
+        }
+        pymap.add(new TokenType("COLON", ":"));
+        i++;
+        parse_while_body(i);
+    }
+
     public void parse_to_python()
     {
         int i=0;
@@ -128,6 +150,10 @@ public class PythonHandler {
                     pymap.add(new TokenType("ELSE", "else"));
                     i++;
                     break;
+                case "WHILE":
+                    pymap.add(new TokenType("WHILE", "while"));
+                    i++;
+                    parse_python_while_expression(i);
                 default:
                     i++;
                     break;
@@ -176,6 +202,10 @@ public class PythonHandler {
             {
                 output += " ".repeat(tabs);
                 output += pymap.get(i).getLiteral()+" ";
+            }
+            else if(pymap.get(i).getToken() == "EXPR")
+            {
+
             }
             else{
                 output += pymap.get(i).getLiteral() + " ";

@@ -9,6 +9,8 @@ public class Tokens {
     ArrayList<TokenType> map = new ArrayList<>();
     PythonHandler pythonHandler;
 
+    ReservedWords rwords = new ReservedWords();
+
     int size;
 
     Tokens(String sourcecode) {
@@ -16,7 +18,7 @@ public class Tokens {
         this.size = sourcecode.length();
     }
 
-    private void parse_printf_statement(int i) {
+    private int parse_printf_statement(int i) {
         StringBuilder ins = new StringBuilder();
         i++;
         while (this.source.charAt(i) != ')') {
@@ -26,6 +28,7 @@ public class Tokens {
 
         String formattedIns = ins.toString().trim();
         map.add(new TokenType("PRINT EXPR", formattedIns));
+        return i;
     }
 
     private boolean is_alpha_numeric(char ch) {
@@ -49,12 +52,22 @@ public class Tokens {
         l.add("|");
         l.add("||");
         l.add(" ");
+        l.add("0");
+        l.add("1");
+        l.add("2");
+        l.add("3");
+        l.add("4");
+        l.add("5");
+        l.add("6");
+        l.add("7");
+        l.add("8");
+        l.add("9");
 
         String symbol = Character.toString(ch);
         return l.contains(symbol);
     }
 
-    private void parse_if_statement(int i) {
+    private int parse_if_statement(int i) {
         char ch = this.source.charAt(i);
         switch (ch) {
             case ' ':
@@ -78,20 +91,21 @@ public class Tokens {
                 map.add(new TokenType("EXPR", k.toString().trim()));
                 break;
         }
+        return i;
     }
 
-    private void parse_if_expression(int i) {
+    private int parse_if_expression(int i) {
         char ch = this.source.charAt(i);
         switch (ch) {
             case ' ':
             case '\n':
                 i++;
-                parse_if_expression(i);
+                i = parse_if_expression(i);
                 break;
             case '{':
                 map.add(new TokenType("OPEN BRACS", "{"));
                 i++;
-                parse_if_statement(i);
+                i = parse_if_statement(i);
                 break;
             case '}':
                 map.add(new TokenType("CLOSE BRACS", "}"));
@@ -99,7 +113,7 @@ public class Tokens {
             case '(':
                 map.add(new TokenType("OPEN PAR", "("));
                 i++;
-                parse_if_expression(i);
+                i = parse_if_expression(i);
                 break;
             case ')':
                 map.add(new TokenType("CLOSE PAR", ")"));
@@ -116,9 +130,10 @@ public class Tokens {
                 map.add(new TokenType("CLOSE PAR", ")"));
                 break;
         }
+        return i;
     }
 
-    void parse_function_expression(int i)
+    int parse_function_expression(int i)
     {
         // grammar for function
         // return type name () { body }
@@ -143,6 +158,7 @@ public class Tokens {
         i++;
         map.add(new TokenType("CLOSE PAR", ")"));
         i++;
+        return i;
     }
 
     void parse_identifier(int i)
@@ -150,47 +166,47 @@ public class Tokens {
 
     }
 
-    void parse_while_body(int i)
+    int parse_while_body(int i)
     {
-        if(i >= this.source.length()) return;
+        if(i >= this.source.length()) return 0;
         char ch = this.source.charAt(i);
         switch (ch)
         {
-            case 'p':
-                if(this.source.startsWith("printf", i)){
-                    i+=6;
-                    String pp = "";
-                    if(this.source.charAt(i) == '(') i++;
-                    while(this.source.charAt(i) != ')')
-                    {
-                        pp += this.source.charAt(i);
-                        i++;
-                    }
-                    map.add(new TokenType("PRINT EXPR", pp));
-                }
-                else{
-                    i++;
-                }
+            case ';':
+            case '\n':
+                i++;
+                i = parse_while_body(i);
+                break;
+            case '{':
+                map.add(new TokenType("OPEN BRACS", "{"));
+                i++;
+                i = parse_while_body(i);
                 break;
             case '}':
                 map.add(new TokenType("CLOSE BRACS", "}"));
                 break;
             default:
                 String pp = "";
-                while(i<this.source.length() && this.source.charAt(i) != ';')
+                while(is_alpha_numeric(this.source.charAt(i)) || is_symbols(this.source.charAt(i)))
                 {
                     pp += this.source.charAt(i);
                     i++;
                 }
 
-                map.add(new TokenType("IDENT", pp));
+                if(rwords.is_keyword(pp))
+                {
+                    map.add(new TokenType("KEYWORDS", pp));
+                }else{
+                    map.add(new TokenType("IDENT", pp));
+                }
                 i++;
-                parse_while_body(i);
+                parse_while_expression(i);
                 break;
         }
+        return i;
     }
 
-    void parse_while_expression(int i)
+    int parse_while_expression(int i)
     {
         // while ( expr ) { body }
 
@@ -201,20 +217,24 @@ public class Tokens {
         char ch = this.source.charAt(i);
         switch(ch)
         {
+            case ';':
+            case '\n':
+                i++;
+                i = parse_while_expression(i);
+                break;
             case '(':
                 map.add(new TokenType("OPEN PAR", "("));
                 i++;
-                parse_while_expression(i);
+                i = parse_while_expression(i);
                 break;
             case ')':
                 map.add(new TokenType("CLOSE PAR", ")"));
                 i++;
-                parse_while_expression(i);
                 break;
             case '{':
                 map.add(new TokenType("OPEN BRACS", "{"));
                 i++;
-                parse_while_body(i);
+                i = parse_while_body(i);
                 break;
             case '}':
                 map.add(new TokenType("CLOSE BRACS", "}"));
@@ -222,21 +242,24 @@ public class Tokens {
                 break;
             default:
                 String kk = "";
-                while(this.source.charAt(i) != ')')
+                while(is_alpha_numeric(this.source.charAt(i)) || is_symbols(this.source.charAt(i)))
                 {
                     kk += this.source.charAt(i);
                     i++;
                 }
                 map.add(new TokenType("EXPR", kk));
-                parse_while_expression(i);
+                i = parse_while_expression(i);
                 break;
         }
+        return i;
     }
 
     void parse_c(int i) {
         while (i < size) {
             char ch = this.source.charAt(i);
+
             switch (ch) {
+                case ';':
                 case ' ':
                 case '\t':
                 case '\n':
@@ -251,7 +274,7 @@ public class Tokens {
                     if (this.source.startsWith("if", i)) {
                         i += 2;
                         map.add(new TokenType("IF", "if"));
-                        parse_if_expression(i);
+                        i = parse_if_expression(i);
                     } else if(this.source.startsWith("int", i)) {
                         i+=3;
 //                        map.add(new TokenType("INT", "int"));
@@ -306,7 +329,7 @@ public class Tokens {
                 case 'p':
                     if (this.source.startsWith("printf", i)) {
                         i += 6;
-                        parse_printf_statement(i);
+                        i = parse_printf_statement(i);
                     } else {
                         i++;
                     }
@@ -323,11 +346,22 @@ public class Tokens {
                     if(this.source.startsWith("while", i)){
                         map.add(new TokenType("WHILE", "while"));
                         i+=5;
-                        parse_while_expression(i);
+                        i = parse_while_expression(i);
                         break;
                     }
+                    break;
                 default:
-                    i++;
+                    String pp = "";
+                    if(!is_alpha_numeric(this.source.charAt(i)) && !is_symbols(this.source.charAt(i))){
+                        i++;
+                    }else{
+                        while (is_alpha_numeric(this.source.charAt(i)) || is_symbols(this.source.charAt(i))){
+                            pp += this.source.charAt(i);
+                            i++;
+                        }
+                        map.add(new TokenType("EXPR", pp));
+                        i++;
+                    }
                     break;
             }
         }
