@@ -210,6 +210,7 @@ public class Tokens {
     int parse_while_expression(int i)
     {
         // while ( expr ) { body }
+        if(i > map.size()) return 0;
 
         while(this.source.charAt(i) == ' '){
             i++;
@@ -267,7 +268,7 @@ public class Tokens {
                     i++;
                     break;
                 case '#':
-                    while (this.source.charAt(i) != '\n') {
+                    while (i<this.size && this.source.charAt(i) != '\n') {
                         i++;
                     }
                     break;
