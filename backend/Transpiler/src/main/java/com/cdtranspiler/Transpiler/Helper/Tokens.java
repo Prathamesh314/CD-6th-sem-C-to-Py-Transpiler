@@ -1,3 +1,5 @@
+package com.cdtranspiler.Transpiler.Helper;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +15,7 @@ public class Tokens {
 
     int size;
 
-    Tokens(String sourcecode) {
+    public Tokens(String sourcecode) {
         this.source = sourcecode;
         this.size = sourcecode.length();
     }
@@ -253,7 +255,7 @@ public class Tokens {
         return i;
     }
 
-    void parse_c(int i) {
+    public void parse_c(int i) {
         while (i < size) {
             char ch = this.source.charAt(i);
 
@@ -381,11 +383,13 @@ public class Tokens {
 //        this.pythonHandler.show();
     }
 
-    void parse_c_to_python()
+    public String parse_c_to_python()
     {
+        this.getTokens();
         this.pythonHandler.parse_to_python();
 //        this.pythonHandler.show_pytokens();
         this.pythonHandler.write_code();
+        return this.pythonHandler.getCode();
     }
 
     void show_py_tokens()
