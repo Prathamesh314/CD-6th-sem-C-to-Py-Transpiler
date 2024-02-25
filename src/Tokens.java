@@ -45,8 +45,7 @@ public class Tokens {
         l.add("!=");
         l.add(">");
         l.add("<");
-        l.add(">=");
-        l.add("<=");
+        l.add("=");
         l.add("&");
         l.add("&&");
         l.add("|");
@@ -303,8 +302,12 @@ public class Tokens {
                             parse_function_expression(i);
                         }else{
                             map.add(new TokenType("DATATYPE", "int"));
+                            while(this.source.charAt(i) != ';'){
+                                kk += this.source.charAt(i);
+                                i++;
+                            }
                             map.add(new TokenType("IDENT", kk));
-                            parse_identifier(i);
+                            i++;
                         }
 
                     }else{
@@ -375,7 +378,7 @@ public class Tokens {
     void show_tokens()
     {
         getTokens();
-        this.pythonHandler.show();
+//        this.pythonHandler.show();
     }
 
     void parse_c_to_python()

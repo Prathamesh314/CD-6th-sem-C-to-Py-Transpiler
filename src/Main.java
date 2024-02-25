@@ -6,14 +6,15 @@ public class Main {
         String source = "#include<stdio.h>\n"+
                 "int main()\n"+
                 "{\n"+
-                "if (x > 0 && y < 5) {\n" +
+                "int a = 2;\n"+
+                "if (x > 0 && y < 5 || z <= 6) {\n" +
                 "   printf(\"Hii\");\n" +
                 "} else {\n" +
                 "   printf(\"Hello\");\n" +
                 "}\n"+
                 "while(t < 5) {\n"+
                 "printf(1);\n"+
-                "t++;\n"+
+                "t--;\n"+
                 "}\n"+
                 "return 0;\n"+
                 "}";
