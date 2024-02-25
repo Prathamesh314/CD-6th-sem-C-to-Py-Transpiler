@@ -15,6 +15,9 @@ In later stage, I have passed this list to another class that converts this C to
 
 # Here are some screenshots 
 
+1. ### C Program
 <img src="/images/c.png" alt="C program"/>
+
+2. ### Python Program
 
 <img src="/images/py.png" alt="P Program" />
