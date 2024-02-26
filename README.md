@@ -1,38 +1,38 @@
 # C-Py-Transpilers
-This is 6th sem Compiler Design project
 
+## Overview
+This repository contains a project developed for the 6th semester Compiler Design course.
 
-# About
+## About
 
-This ia a basic Transpiler written in JAVA which converts C language to Python language, semantically and syntactically.
-It doesnot support lexical analysis for error checking, it just convert one language to other.
+C-Py-Transpilers is a basic transpiler written in Java designed to convert C language code into Python code both semantically and syntactically. Unlike a full compiler, it doesn't perform lexical analysis for error checking; its sole purpose is to convert code from one language to another.
 
-# My Approach
+## Approach
 
-I have written grammar rule for 1) if-else 2) while 3) variable declarations 4) functions in C and collected Tokens like 1) Keywords 2) Identifiers 3) Operators etc. and saved all these tokens in a list
+The approach involves defining grammar rules for common C language constructs such as `if-else`, `while`, variable declarations, and functions. Tokens such as keywords, identifiers, and operators are collected and organized into a list. Then, a conversion process takes place where these C tokens are transformed into Python tokens, ensuring adherence to Python's semantic rules. For instance, operators like `(++)`, `(--)`, `(&&)`, and `(||)` which are not supported in Python are appropriately replaced.
 
-In later stage, I have passed this list to another class that converts this C tokens to Py tokens and also ensures semantic rules of python like python doesnot support (++) or (--) operators, it doesnot support (&&) or (||) so i have replaced them with correct syntax.
+## Screenshots
 
-# Here are some screenshots 
+### C Program
+![C program](/images/c.png)
 
-1. ### C Program
-<img src="/images/c.png" alt="C program"/>
+### Python Program
+![Python program](/images/py.png)
 
-2. ### Python Program
+## How to Run Locally
 
-<img src="/images/py.png" alt="P Program" />
+### Prerequisites
+- Docker
+- Java
+- Node.js
 
+1. Clone this repository to your local machine.
+2. Open your terminal and run the command `docker compose up -d`.
+3. Navigate to http://localhost:8080 and create a new database named `transpiler`.
+4. The backend is written in Java, so run it on your preferred Java IDE.
+5. The frontend is built with Next.js. To run it, open a new terminal window (if the backend and frontend are running on the same IDE) and navigate to the `frontend` directory. Then, run `npm run dev`.
+6. Visit http://localhost:3000 to view the website.
 
-# How to run this program locally
+With this setup, you can explore the functionality of the C-Py-Transpilers project locally.
 
-1. Prerequisites
-   > docker
-   > java
-   > node
-
-2. Clone this repo on your local machine
-3. Run this command :- `docker compose up -d` on your terminal
-4. Goto http://localhost:8080 and create a new database [transpiler]
-5. Backend is in JAVA so run it on your regular java ide
-6. Frontend is in nextjs. To run frontend, Open new terminal [If backend and frontend both are running on same IDE] `cd frontend && npm run dev`
-7. Goto localhost:3000 to view website
+Ensure the fonts are visually pleasing, headings are clear and concise, installation guidelines are easy to follow, and images are neatly arranged for better readability and understanding.
