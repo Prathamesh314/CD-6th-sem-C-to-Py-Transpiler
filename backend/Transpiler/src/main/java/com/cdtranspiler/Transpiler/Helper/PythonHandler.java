@@ -105,6 +105,11 @@ public class PythonHandler {
                 pymap.add(new TokenType("LITERAL", map.get(i).getLiteral()));
                 i++;
                 break;
+            case "FOR":
+                pymap.add(new TokenType("FOR", "for"));
+                i++;
+                i = parse_for_expression(i);
+                break;
             default:
                 i++;
                 break;
@@ -208,6 +213,80 @@ public class PythonHandler {
         return i;
     }
 
+    int parse_for_expression(int i)
+    {
+        if(map.get(i).getLiteral() == "("){
+            i++;
+        }
+        String expr = map.get(i).getLiteral();
+        String op = "";
+
+        String var="", range="", increment="", initial_val="";
+                // expr -> i=0;i<n;i++
+//        System.out.println(expr);
+        String[] a = expr.split(" ");
+        String[] arr = a[1].split(";");
+
+        String first = arr[0].strip();
+        String second = arr[1].strip();
+        String third = arr[2].strip();
+        int tra = 0;
+        while(first.charAt(tra) != '='){
+            var += first.charAt(tra);
+            tra ++;
+        }
+
+        tra ++;
+        for(;tra<first.length();tra++)
+        {
+            initial_val += first.charAt(tra);
+        }
+
+        tra = var.length();
+        while(second.charAt(tra) == '>' || second.charAt(tra) == '<' || second.charAt(tra) == '=' || second.charAt(tra) == '!')
+        {
+            tra++;
+        }
+        for(;tra<second.length();tra++)
+        {
+            range += second.charAt(tra);
+        }
+        tra = var.length();
+
+        if(third.charAt(tra) == '+')
+        {
+            if(third.charAt(tra+1) == '+')
+            {
+                increment = "1";
+            }else{
+                tra+=2;
+                for(;tra<third.length();tra++)
+                {
+                    increment += third.charAt(tra);
+                }
+            }
+        }else if(third.charAt(tra) == '-')
+        {
+            if(third.charAt(tra+1) == '-')
+            {
+                increment = "-1";
+            }
+            else{
+                tra += 2;
+                increment += '-';
+                for(;tra<third.length();tra++)
+                {
+                    increment += third.charAt(tra);
+                }
+            }
+        }
+        // for var in range(initial_val, range, increment): body
+        op += " " + var + " in range( " + initial_val + ", " + range + ", " + increment + ")";
+        i++;
+        pymap.add(new TokenType("EXPR", op));
+        return i;
+    }
+
     public void parse_to_python()
     {
         int i=0;
@@ -236,8 +315,14 @@ public class PythonHandler {
                     i++;
                     i = parse_python_while_expression(i);
                     break;
+                case "FOR":
+                    pymap.add(new TokenType("FOR", "for"));
+                    i++;
+                    i = parse_for_expression(i);
+                    break;
                 case "DATATYPE":
                     i++;
+                    System.out.println(map.get(i).getLiteral());
                     pymap.add(new TokenType("LITERAL", map.get(i).getLiteral()));
                     break;
                 case "IF":
@@ -309,6 +394,64 @@ public class PythonHandler {
             {
                 output += " ".repeat(tabs);
                 output += pymap.get(i).getLiteral()+"\n";
+            }
+            else if(pymap.get(i).getToken() == "FOR")
+            {
+                output += " ".repeat(tabs);
+                output += pymap.get(i).getLiteral();
+                output += pymap.get(i+1).getLiteral();
+                i++;
+//                String expr = pymap.get(i).getLiteral();
+//                String var="", range="", increment="", initial_val="";
+//                // expr -> i=0;i<n;i++
+//                System.out.println(expr);
+//                String[] arr = expr.split(";");
+//
+//                String first = arr[0].strip();
+//                String second = arr[1].strip();
+//                String third = arr[2].strip();
+//                int tra = 0;
+//                while(first.charAt(tra) != '='){
+//                    var += first.charAt(tra);
+//                    tra ++;
+//                }
+//
+//                tra ++;
+//                for(;tra<first.length();tra++)
+//                {
+//                    initial_val += first.charAt(tra);
+//                }
+//
+//                tra = var.length();
+//                while(second.charAt(tra) == '>' || second.charAt(tra) == '<' || second.charAt(tra) == '=' || second.charAt(tra) == '!')
+//                {
+//                    tra++;
+//                }
+//                for(;tra<second.length();tra++)
+//                {
+//                    range += second.charAt(tra);
+//                }
+//                tra = var.length();
+//
+//                if(third.charAt(tra) == '+')
+//                {
+//                    if(third.charAt(tra) == '+')
+//                    {
+//                        increment = "1";
+//                    }else{
+//                        tra++;
+//                        for(;tra<third.length();tra++)
+//                        {
+//                            increment += third.charAt(tra);
+//                        }
+//                    }
+//                }
+//                // for var in range(initial_val, range, increment): body
+//                output += " " + var + " in range( " + initial_val + " " + range + " " + increment + "):";
+//                i++;
+//                i++;
+//                tabs+=4;
+
             }
             else{
 //                output += " ".repeat(tabs);

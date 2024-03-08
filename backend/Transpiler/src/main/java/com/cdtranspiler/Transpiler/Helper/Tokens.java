@@ -256,6 +256,37 @@ public class Tokens {
         return i;
     }
 
+
+    int parse_for_expression(int i)
+    {
+        // for(int i=0;i<n;i++){ body }
+
+        while(this.source.charAt(i) == ' '){
+            i++;
+        }
+        if(this.source.charAt(i) == '(')
+        {
+            map.add(new TokenType("OPEN PAR", "("));
+            i++;
+        }
+        String expr = "";
+        while(this.source.charAt(i) != ')')
+        {
+            expr += this.source.charAt(i);
+            i++;
+        }
+        map.add(new TokenType("EXPR", expr));
+
+        if(this.source.charAt(i) == ')')
+        {
+            map.add(new TokenType("CLOSE PAR", ")"));
+            i++;
+        }
+
+
+        return i;
+    }
+
     public void parse_c(int i) {
         while (i < size) {
             char ch = this.source.charAt(i);
@@ -304,12 +335,20 @@ public class Tokens {
                             map.add(new TokenType("IDENT", kk));
                             parse_function_expression(i);
                         }else{
-                            map.add(new TokenType("DATATYPE", "int"));
+                            int is_equal_present = 0;
+
                             while(this.source.charAt(i) != ';'){
+                                if(this.source.charAt(i) == '='){
+                                    is_equal_present = 1;
+                                }
                                 kk += this.source.charAt(i);
                                 i++;
                             }
-                            map.add(new TokenType("IDENT", kk));
+                            if(is_equal_present == 1){
+                                map.add(new TokenType("DATATYPE", "int"));
+                                map.add(new TokenType("IDENT", kk));
+                            }
+
                             i++;
                         }
 
@@ -356,6 +395,14 @@ public class Tokens {
                         break;
                     }
                     break;
+                case 'f':
+                    if(this.source.startsWith("for", i)){
+                        map.add(new TokenType("FOR", "for"));
+                        i += 3;
+                        i = parse_for_expression(i);
+                        break;
+                    }
+                    break;
                 default:
                     String pp = "";
                     if(!is_alpha_numeric(this.source.charAt(i)) && !is_symbols(this.source.charAt(i))){
@@ -380,8 +427,13 @@ public class Tokens {
 
     void show_tokens()
     {
-        getTokens();
+        ArrayList<TokenType> map = getTokens();
 //        this.pythonHandler.show();
+        for(int i=0;i<map.size();i++)
+        {
+            System.out.println("Token: " + map.get(i).getToken() + " | " + "Literal: "+ map.get(i).getLiteral());
+        }
+
     }
 
     public String parse_c_to_python()
