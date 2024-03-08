@@ -2,7 +2,7 @@ package com.cdtranspiler.Transpiler.Helper;
 
 public class main {
     public static void main(String[] args) {
-        String source = "#include<stdio.h>\n"+"int main()\n"+"{\n"+"int a;\n"+
+        String source = "#include<stdio.h>\n"+"int main()\n"+"{\n"+"int a=-1;\n"+
                 "for(int i=100;i>=10;i-=2)\n" + "{\n" + "\tprintf('Hello World');\n" + "}\n"
                 + "\treturn 0;\n" + "}\n";
         Tokens t = new Tokens(source);
