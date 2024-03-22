@@ -1,73 +1,109 @@
-"use client"
-import React, { useState } from 'react';
-import axios from "axios";
+'use client'
+import React, { useState } from 'react'
+import axios from 'axios'
 
-interface TokenResponse{
-  id: number
-  sourcecode: string
-  targetcode: string
-}
-
-const postOptions = {
-  method: "POST",
-  mode: "no-cors",
-}
-
-const getOptions = {
-  method: "GET",
-  mode: "no-cors",
+interface Code {
+    id: number
+    sourcecode: string
+    targetcode: string
 }
 
 export default function Home() {
-  const [code, setCode] = useState('');
+    const [code, setCode] = useState('')
+    const [responseCode, setResponseCode] = useState<Code[]>([])
+    const [show, setShow] = useState<boolean[]>([])
 
-
-  const handleSubmit = async() => {
-    try {
-      const response = await fetch('http://localhost:8081/api/add', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ sourcecode: code })
-      });
-      
-      // const data = await response.json();
-      // setCode(data);
-      console.log("Code added successfully")
-    } catch (error) {
-      console.error('Error submitting code:', error);
+    const handleSubmit = async () => {
+        try {
+            const response = await fetch('http://localhost:8081/api/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ sourcecode: code }),
+            })
+            console.log('Code added successfully')
+        } catch (error) {
+            console.error('Error submitting code:', error)
+        }
     }
-  };
 
-  const findCode = async()=>{
-    const response = (await axios.get("http://localhost:8081/api/get")).data
+    const findCode = async () => {
+        try {
+            const response = await axios.get('http://localhost:8081/api/get')
+            setResponseCode(response.data)
+            setShow(new Array(response.data.length).fill(false))
+        } catch (error) {
+            console.error('Error fetching code:', error)
+        }
+    }
 
-      console.log(response)
-  }
+    const handleCodeChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setCode(e.target.value)
+    }
 
-  const handleCodeChange = (e:any) => {
-    setCode(e.target.value);
-  };
+    const toggleShow = (index: number) => {
+        const newShow = [...show]
+        newShow[index] = !newShow[index]
+        setShow(newShow)
+    }
 
-  return (
-    <div className='w-full flex flex-col justify-center items-center mt-10'>
-      <h2 className='font-bold text-2xl mb-3'>Submit Your Code</h2>
-      <textarea
-        value={code}
-        onChange={handleCodeChange}
-        placeholder="Enter your code here..."
-        rows={10}
-        cols={50}
-        className='text-black border-2-black rounded-xl p-2'
-      />
-      <br />
-      <div className='flex w-[200px] justify-center items-center gap-x-5'>
-        <button onClick={handleSubmit} className='bg-blue-400 w-32 h-10 border-blue-600 rounded-xl'>Submit</button>
-        <button onClick={findCode} className='bg-blue-400 w-40 h-10 border-blue-600 rounded-xl'>Get-Code</button>
-      </div>
-    </div> 
-  );
+    return (
+        <div className="mt-10 flex w-full flex-col items-center justify-center">
+            <h2 className="mb-3 text-2xl font-bold">Submit Your Code</h2>
+            <div className="flex">
+                <div>
+                    {responseCode.slice(0, 10).map((code, index) => (
+                        <div
+                            key={code.id}
+                            onClick={() => toggleShow(index)}
+                            className="cursor-pointer border-2 py-4 "
+                        >
+                            <h3>Source code</h3>
+                            <p>{code.sourcecode}</p>
+                            {show[index] && (
+                                <>
+                                    <h3>Traget code</h3>
+                                    <p>{code.targetcode}</p>
+                                </>
+                            )}
+                        </div>
+                    ))}
+                </div>
+                <div className="ml-6 flex h-96 w-full flex-col justify-between">
+                    <div className="flex w-96 flex-col">
+                        <textarea
+                            value={code}
+                            onChange={handleCodeChange}
+                            placeholder="Enter your code here..."
+                            rows={10}
+                            className="mb-4 rounded-lg border border-gray-700 bg-transparent p-2 text-white"
+                        />
+                        <button
+                            onClick={handleSubmit}
+                            className="rounded-lg bg-gray-800 px-4 py-2 text-white hover:bg-gray-700"
+                        >
+                            Submit
+                        </button>
+                    </div>
+                    <div className="mt-8 flex w-96 flex-col">
+                        <code className="text-green-400">
+                            <pre className="whitespace-pre-wrap">
+                                {responseCode.length > 0
+                                    ? responseCode[responseCode.length - 1]
+                                          .targetcode
+                                    : ''}
+                            </pre>
+                        </code>
+                        <button
+                            onClick={findCode}
+                            className="mt-4 rounded-lg bg-gray-800 px-4 py-2 text-white hover:bg-gray-700"
+                        >
+                            Get-Code
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
 }
-
-
