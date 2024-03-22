@@ -33,7 +33,7 @@ The approach involves meticulously crafting grammar rules for prevalent C langua
 5. If you don't have an IDE or using terminal,  follow these steps :-
      1. run `mvn clean package`
      2. **target** folder will be generated
-     3. run `java -jar target/Transpiler-0.0.1-SNAPSHOT.jar`
+6. run `java -jar target/Transpiler-0.0.1-SNAPSHOT.jar`
 7. For the frontend, built with Next.js, navigate to the `frontend` directory in a new terminal window. Then, execute `npm run dev`.
 8. Access http://localhost:3000 to view the website.
 
